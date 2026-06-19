@@ -1,0 +1,15 @@
+# Example YOLO data.yaml for the ST dataset
+# ST = SeaClear + TrashCan
+
+path: PATH/TO/ST_DATASET_ROOT
+
+train: train/images
+val: val/images
+
+names:
+  0: animal
+  1: trash_plastic
+  2: trash_other
+  3: nature
+  4: rov
+  5: unknown
