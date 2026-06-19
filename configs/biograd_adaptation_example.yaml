@@ -1,0 +1,15 @@
+# Example YOLO data.yaml for runs2 Biograd adaptation
+# Example: ST + 40% BM + Biograd step 6
+
+path: PATH/TO/st_bm_40pct_plus_biograd_step6_6cls
+
+train: train/images
+val: val/images
+
+names:
+  0: animal
+  1: trash_plastic
+  2: trash_other
+  3: nature
+  4: rov
+  5: unknown
