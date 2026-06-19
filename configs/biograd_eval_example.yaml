@@ -1,0 +1,15 @@
+# Example YOLO data.yaml for Biograd-only evaluation
+# The val split is used as the fixed Biograd evaluation/test split.
+
+path: PATH/TO/merged_blueye_fifish_30train_70test_6cls
+
+train: train/images
+val: val/images
+
+names:
+  0: animal
+  1: trash_plastic
+  2: trash_other
+  3: nature
+  4: rov
+  5: unknown
