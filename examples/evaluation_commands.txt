@@ -1,0 +1,106 @@
+# Example evaluation commands
+
+This file shows how to run the evaluation scripts used in this project.
+
+Before running evaluation:
+1. Make sure the trained model weights exist.
+2. Edit the WEIGHTS path inside the evaluation script.
+3. Edit the BIOGRAD_YAML path inside the evaluation script.
+4. Edit the output directory where evaluation results should be saved.
+
+The main evaluation used in this project is Biograd-only evaluation.
+
+
+------------------------------------------------------------
+1. Evaluate one model on Biograd
+------------------------------------------------------------
+
+This evaluates a selected trained model on the fixed Biograd evaluation split.
+
+The script calculates:
+
+- precision
+- recall
+- mAP50
+- mAP50-95
+
+It also saves the results into:
+
+biograd_metrics.csv
+
+Command:
+
+python scripts/evaluation/evaluate_biograd.py
+
+
+------------------------------------------------------------
+2. How to use it for different models
+------------------------------------------------------------
+
+To evaluate a different model, open:
+
+scripts/evaluation/evaluate_biograd.py
+
+and change this line:
+
+WEIGHTS = r"PATH/TO/weights/best.pt"
+
+For example, to evaluate the best model from runs1 T04:
+
+WEIGHTS = r"PATH/TO/runs1/T04_40pct_6cls_from_T03_best/weights/best.pt"
+
+To evaluate the best model from runs2 S6:
+
+WEIGHTS = r"PATH/TO/runs2/R2_S6_biogradStep6_from_R2S5/weights/best.pt"
+
+
+------------------------------------------------------------
+3. Biograd dataset YAML
+------------------------------------------------------------
+
+The BIOGRAD_YAML file should point to the Biograd-only evaluation split.
+
+Example:
+
+BIOGRAD_YAML = r"PATH/TO/merged_blueye_fifish_30train_70test_6cls/data.yaml"
+
+In this setup, the validation split inside the YAML is used as the fixed
+Biograd evaluation/test split.
+
+
+------------------------------------------------------------
+4. Output folder
+------------------------------------------------------------
+
+Each evaluation should have its own output folder.
+
+Example:
+
+OUTDIR = r"PATH/TO/runs_eval/EVAL_BIOGRAD_T04"
+
+or:
+
+OUTDIR = r"PATH/TO/runs_eval/EVAL_BIOGRAD_R2_S6"
+
+The script saves:
+
+- Ultralytics validation outputs
+- plots
+- confusion matrix
+- biograd_metrics.csv
+
+
+------------------------------------------------------------
+Notes
+------------------------------------------------------------
+
+This evaluation is separate from the global validation used during training.
+
+Global validation:
+- used during training
+- contains ST validation, BM validation, and Biograd evaluation images
+
+Biograd-only evaluation:
+- used after training
+- evaluates the trained model only on the fixed Biograd split
+- used to measure adaptation to the target domain

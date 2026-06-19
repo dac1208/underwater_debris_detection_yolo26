@@ -1,0 +1,110 @@
+# Example training commands
+
+This file shows how to run the training scripts used in this project.
+
+Before running any command:
+1. Install the required Python packages.
+2. Edit the paths inside the selected script.
+3. Make sure the dataset YAML files point to the correct image and label folders.
+4. Make sure the initial model weights are available, for example yolo26n.pt.
+
+The scripts are stored as readable templates in the scripts/ folder.
+If they are saved as .txt files, rename the selected file to .py before running it.
+
+
+------------------------------------------------------------
+1. Baseline training: ST dataset only
+------------------------------------------------------------
+
+This trains the baseline model using only the public ST dataset:
+SeaClear + TrashCan.
+
+Training data:
+- ST train split
+
+Validation data:
+- shared/global validation split
+
+Command:
+
+python scripts/training/train_baseline_st.py
+
+
+------------------------------------------------------------
+2. Runs1: progressive BM addition
+------------------------------------------------------------
+
+This trains models by progressively adding BM data:
+Baška + Muzza.
+
+The training sequence is:
+
+- T01: ST + 10% BM
+- T02: ST + 20% BM
+- T03: ST + 30% BM
+- T04: ST + 40% BM
+- T05: ST + 50% BM
+- T06: ST + 60% BM
+- T07: ST + 70% BM
+- T08: ST + 80% BM
+- T09: ST + 90% BM
+- T10: ST + 100% BM
+
+Weight chaining is used:
+- T01 starts from yolo26n.pt
+- T02 starts from T01 best.pt
+- T03 starts from T02 best.pt
+- and so on
+
+Command:
+
+python scripts/training/train_runs1_bm_progressive.py
+
+
+------------------------------------------------------------
+3. Runs2: progressive Biograd adaptation
+------------------------------------------------------------
+
+This trains models by progressively adding Biograd training images
+to the best model from runs1.
+
+The starting model is the best runs1 model, usually T04.
+
+The training sequence is:
+
+- S1: ST + 40% BM + Biograd step 1
+- S2: ST + 40% BM + Biograd step 2
+- S3: ST + 40% BM + Biograd step 3
+- S4: ST + 40% BM + Biograd step 4
+- S5: ST + 40% BM + Biograd step 5
+- S6: ST + 40% BM + Biograd step 6
+
+Weight chaining is used:
+- S1 starts from runs1 T04 best.pt
+- S2 starts from S1 best.pt
+- S3 starts from S2 best.pt
+- and so on
+
+Command:
+
+python scripts/training/train_runs2_biograd_adaptation.py
+
+
+------------------------------------------------------------
+Notes
+------------------------------------------------------------
+
+The exact dataset paths, weight paths, and output folders are not hardcoded
+in this example file. They should be edited inside each script before running.
+
+Typical training settings used in the experiments:
+
+epochs = 100
+imgsz = 640
+batch = -1
+device = 0
+workers = 8
+seed = 0
+patience = 7
+close_mosaic = 20
+save_period = 5
