@@ -1,0 +1,56 @@
+"""
+Evaluate one trained model on the Biograd-only evaluation set.
+
+Usage:
+    1. Rename this file to evaluate_biograd.py
+    2. Edit WEIGHTS, BIOGRAD_YAML, and OUTDIR.
+    3. Run:
+       python evaluate_biograd.py
+
+Output:
+    - Ultralytics validation outputs in OUTDIR
+    - biograd_metrics.csv with precision, recall, mAP50, mAP50-95
+"""
+
+import csv
+import os
+from ultralytics import YOLO
+
+
+# =========================
+# EDIT THESE PATHS
+# =========================
+WEIGHTS = r"PATH/TO/weights/best.pt"
+BIOGRAD_YAML = r"PATH/TO/merged_blueye_fifish_30train_70test_6cls/data.yaml"
+OUTDIR = r"PATH/TO/runs_eval/EVAL_BIOGRAD_MODEL_NAME"
+
+
+# =========================
+# EVALUATION
+# =========================
+os.makedirs(OUTDIR, exist_ok=True)
+
+model = YOLO(WEIGHTS)
+
+results = model.val(
+    data=BIOGRAD_YAML,
+    split="val",
+    device=0,
+    project=OUTDIR,
+    name=".",
+)
+
+precision = float(results.results_dict.get("metrics/precision(B)", 0))
+recall = float(results.results_dict.get("metrics/recall(B)", 0))
+map50 = float(results.results_dict.get("metrics/mAP50(B)", 0))
+map5095 = float(results.results_dict.get("metrics/mAP50-95(B)", 0))
+
+csv_path = os.path.join(OUTDIR, "biograd_metrics.csv")
+
+with open(csv_path, "w", newline="", encoding="utf-8") as f:
+    writer = csv.writer(f)
+    writer.writerow(["precision", "recall", "mAP50", "mAP50-95"])
+    writer.writerow([precision, recall, map50, map5095])
+
+print("Saved:", csv_path)
+print("P,R,mAP50,mAP50-95 =", precision, recall, map50, map5095)
