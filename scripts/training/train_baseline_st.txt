@@ -1,0 +1,46 @@
+"""
+Train baseline model on ST dataset only (SeaClear + TrashCan), with shared/global validation.
+
+Usage:
+    1. Rename this file to train_baseline_st.py
+    2. Edit the paths below.
+    3. Run:
+       python train_baseline_st.py
+"""
+
+from ultralytics import YOLO
+
+
+# =========================
+# EDIT THESE PATHS
+# =========================
+INITIAL_WEIGHTS = r"PATH/TO/yolo26n.pt"
+
+# Dataset YAML should point to:
+# train = ST train images
+# val   = shared/global validation images
+DATA_YAML = r"PATH/TO/st_train_shared_val_0bm.yaml"
+
+PROJECT_DIR = r"PATH/TO/runs"
+RUN_NAME = "BASELINE_0BM_STtrain_sharedVAL_yolo26n_img640"
+
+
+# =========================
+# TRAINING
+# =========================
+model = YOLO(INITIAL_WEIGHTS)
+
+model.train(
+    data=DATA_YAML,
+    epochs=100,
+    imgsz=640,
+    batch=-1,
+    device=0,
+    workers=8,
+    seed=0,
+    patience=7,
+    close_mosaic=20,
+    save_period=5,
+    project=PROJECT_DIR,
+    name=RUN_NAME,
+)
